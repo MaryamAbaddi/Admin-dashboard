@@ -5,7 +5,6 @@ export default function Sidebar({ screen, onChangeScreen, whitelistCount, disput
     { key: "whitelist", label: "Whitelist requests", count: whitelistCount },
     { key: "users", label: "Users", count: 0 },
     { key: "disputes", label: "Disputes", count: disputesCount },
-    { key: "auditLog", label: "Audit log", count: 0 },
   ];
 
   return (

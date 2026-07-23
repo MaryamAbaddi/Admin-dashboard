@@ -1,6 +1,20 @@
 import { theme } from "../../styles/theme";
 
+const APPROVAL_LABELS = {
+  approved: "Approved",
+  pending: "Pending",
+  rejected: "Rejected",
+};
+
+const APPROVAL_COLORS = {
+  approved: theme.success,
+  pending: theme.warning,
+  rejected: theme.danger,
+};
+
 export default function UserRow({ user, isFirst }) {
+  const color = APPROVAL_COLORS[user.approvalStatus] || theme.muted;
+
   return (
     <div
       style={{
@@ -15,7 +29,8 @@ export default function UserRow({ user, isFirst }) {
       <div>
         <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>{user.name}</p>
         <p style={{ fontSize: 12, color: theme.muted, margin: "2px 0 0" }}>
-          {user.email} · {user.company}
+          {user.email}
+          {user.company ? ` · ${user.company}` : ""}
         </p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
@@ -24,13 +39,13 @@ export default function UserRow({ user, isFirst }) {
           style={{
             fontSize: 12,
             fontWeight: 600,
-            color: theme.accent,
-            background: "#f7e5e7",
+            color,
+            background: "#f4f4f4",
             padding: "3px 10px",
             borderRadius: 999,
           }}
         >
-          {user.role}
+          {APPROVAL_LABELS[user.approvalStatus] || user.approvalStatus}
         </span>
       </div>
     </div>

@@ -4,9 +4,14 @@ import Field from "../atoms/Field";
 import Section from "../molecules/Section";
 import Button from "../atoms/Button";
 
+function formatJod(amount) {
+  return `JOD ${Number(amount).toLocaleString()}`;
+}
+
 export default function WhitelistDrawer({ request, onClose, onApprove, onReject }) {
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState("");
+  const { companyDetails } = request;
 
   function handleClose() {
     setRejecting(false);
@@ -47,9 +52,9 @@ export default function WhitelistDrawer({ request, onClose, onApprove, onReject 
           }}
         >
           <div>
-            <p style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{request.email}</p>
+            <p style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{request.name}</p>
             <p style={{ fontSize: 12, color: theme.muted, margin: "2px 0 0" }}>
-              Requested {request.requestedDate}
+              {request.email} · Requested {request.requestedDate}
             </p>
           </div>
           <div onClick={handleClose} style={{ cursor: "pointer", fontSize: 18, color: theme.muted, lineHeight: 1 }}>
@@ -58,11 +63,58 @@ export default function WhitelistDrawer({ request, onClose, onApprove, onReject 
         </div>
 
         <div style={{ flex: 1, overflowY: "auto" }}>
-          <Section title="Request">
-            <Field label="Requested by" value={request.requestedBy} />
-            <Field label="Email to whitelist" value={request.email} />
-            <Field label="Note" value={request.note || "—"} />
+          <Section title="Applicant">
+            <Field label="Name" value={request.name} />
+            <Field label="Email" value={request.email} />
+            <Field label="Phone number" value={request.phone || "—"} />
+            <Field label="Requested" value={request.requestedDate} />
           </Section>
+
+          {!companyDetails && (
+            <Section title="Company details">
+              <p style={{ fontSize: 13, color: theme.muted, margin: 0 }}>
+                This applicant hasn't submitted company details yet.
+              </p>
+            </Section>
+          )}
+
+          {companyDetails && (
+            <>
+              <Section title="Company Legal Info">
+                <Field label="Legal company name" value={companyDetails.legalCompanyName} />
+                <Field label="Trading name" value={companyDetails.tradingName} />
+                <Field label="Registration number" value={companyDetails.registrationNumber} />
+                <Field label="Tax / VAT number" value={companyDetails.taxVatNumber} />
+                <Field label="Legal structure" value={companyDetails.legalStructure} />
+                <Field label="Year of establishment" value={companyDetails.yearOfEstablishment} />
+                <Field label="Registered address" value={companyDetails.registeredAddress} />
+                <Field label="Country of registration" value={companyDetails.countryOfRegistration} />
+              </Section>
+
+              <Section title="Contact Information">
+                <Field label="Primary contact" value={companyDetails.primaryContactName} />
+                <Field label="Position / title" value={companyDetails.positionTitle} />
+                <Field label="Company email" value={companyDetails.primaryEmail} />
+                <Field label="Phone number" value={companyDetails.primaryPhoneNumber} />
+              </Section>
+
+              <Section title="Business Qualifications">
+                <Field label="Business license number" value={companyDetails.businessLicenseNumber} />
+                <Field label="Contractor classification grade" value={companyDetails.contractorClassificationGrade} />
+                <Field label="Sectors" value={companyDetails.sectors.join(", ")} />
+                <Field label="Years of experience" value={companyDetails.yearsOfExperience} />
+                <Field label="Team size" value={companyDetails.teamSize} />
+                <Field label="Annual revenue" value={formatJod(companyDetails.annualRevenueJod)} />
+              </Section>
+
+              <Section title="Banking Basics">
+                <Field label="Primary bank" value={companyDetails.primaryBankName} />
+                <Field label="IBAN" value={companyDetails.ibanNumber} />
+                <Field label="SWIFT / BIC code" value={companyDetails.swiftBicCode} />
+                <Field label="Bank branch" value={companyDetails.bankBranchNameCity} />
+              </Section>
+            </>
+          )}
         </div>
 
         <div style={{ padding: "18px 28px", borderTop: `1px solid ${theme.border}` }}>

@@ -1,6 +1,10 @@
 import { theme } from "../../styles/theme";
 
 export default function WhitelistRequestRow({ request, isFirst, onClick }) {
+  const company = request.companyDetails
+    ? request.companyDetails.tradingName || request.companyDetails.legalCompanyName
+    : null;
+
   return (
     <div
       onClick={onClick}
@@ -15,9 +19,10 @@ export default function WhitelistRequestRow({ request, isFirst, onClick }) {
       }}
     >
       <div>
-        <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>{request.email}</p>
+        <p style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>{request.name}</p>
         <p style={{ fontSize: 12, color: theme.muted, margin: "2px 0 0" }}>
-          {request.requestedBy} · Requested {request.requestedDate}
+          {company ? `${company} · ` : ""}
+          {request.email} · Requested {request.requestedDate}
         </p>
       </div>
       <span style={{ fontSize: 13, color: theme.muted }}>Review →</span>

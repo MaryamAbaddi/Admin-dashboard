@@ -1,22 +1,16 @@
-import { MOCK_NETWORK_DELAY_MS } from "../config/env";
-import { initialWhitelistRequests } from "../../constants/mockData";
+import { apiClient } from "./client";
 
-function delay(value) {
-  return new Promise((resolve) => setTimeout(() => resolve(value), MOCK_NETWORK_DELAY_MS));
+export async function fetchWhitelistRequests(token) {
+  return apiClient.get("/admin/users/pending", { token });
 }
 
-export async function fetchWhitelistRequests() {
-  // const res = await fetch(`${API_BASE_URL}/whitelist-requests`, { headers: authHeaders() });
-  // return res.json();
-  return delay(initialWhitelistRequests);
+export async function approveWhitelistRequest(userId, token) {
+  return apiClient.post(`/admin/users/${userId}/approve`, { token });
 }
 
-export async function approveWhitelistRequest(requestId) {
-  // await fetch(`${API_BASE_URL}/whitelist-requests/${requestId}/approve`, { method: "POST", ... });
-  return delay({ ok: true });
-}
-
-export async function rejectWhitelistRequest(requestId, reason) {
-  // await fetch(`${API_BASE_URL}/whitelist-requests/${requestId}/reject`, { method: "POST", body: { reason } });
-  return delay({ ok: true });
+export async function rejectWhitelistRequest(userId, reason, token) {
+  return apiClient.post(`/admin/users/${userId}/reject`, {
+    token,
+    body: { reason },
+  });
 }

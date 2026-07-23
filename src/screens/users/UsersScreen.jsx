@@ -13,7 +13,7 @@ export default function UsersScreen({ users }) {
       (u) =>
         u.name.toLowerCase().includes(q) ||
         u.email.toLowerCase().includes(q) ||
-        u.company.toLowerCase().includes(q)
+        (u.company && u.company.toLowerCase().includes(q))
     );
   }, [users, search]);
 

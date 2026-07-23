@@ -4,6 +4,10 @@
 // description, completionPercentage, milestone, submittedDate, attachments.
 // Check this against the real model and adjust field names/types to match.
 
+// `applicant` mirrors SignupData (minus password/confirmPassword — never
+// shown to admins). `companyDetails` mirrors CompanyDetailsDraft from
+// company_details_model.dart, submitted alongside the whitelist request so
+// admins can vet the company before approving access.
 export const initialWhitelistRequests = [
   {
     id: "wl-1",
@@ -12,6 +16,35 @@ export const initialWhitelistRequests = [
     requestedDate: "July 20, 2026",
     note: "Requested via onboarding form — new contractor, no prior account.",
     status: "Pending",
+    applicant: {
+      firstName: "Rami",
+      lastName: "Hasan",
+      workEmail: "contact@newcontractorco.jo",
+      phoneNumber: "+962 79 887 2201",
+    },
+    companyDetails: {
+      legalCompanyName: "Newco Contracting LLC",
+      tradingName: "Newco Contracting",
+      registrationNumber: "JO-CR-142093",
+      taxVatNumber: "JO-TAX-201144",
+      legalStructure: "Limited Liability Company (LLC)",
+      yearOfEstablishment: 2023,
+      registeredAddress: "Al-Rabieh, Amman, Jordan",
+      countryOfRegistration: "Jordan",
+      primaryContactName: "Rami Hasan",
+      positionTitle: "General Manager",
+      primaryPhoneNumber: "+962 79 887 2201",
+      businessLicenseNumber: "JO-LIC-61840",
+      contractorClassificationGrade: "Grade C (Ministry of Public Works)",
+      sectors: ["Construction", "Renovation & Fit-out"],
+      yearsOfExperience: 2,
+      teamSize: 12,
+      annualRevenueJod: 85000,
+      primaryBankName: "Cairo Amman Bank",
+      ibanNumber: "JO12 CAAB 4455 6677",
+      swiftBicCode: "CAABJOAX",
+      bankBranchNameCity: "Al-Rabieh Branch, Amman",
+    },
   },
   {
     id: "wl-2",
@@ -20,6 +53,35 @@ export const initialWhitelistRequests = [
     requestedDate: "July 19, 2026",
     note: "Second contact for existing beneficiary account, needs own login.",
     status: "Pending",
+    applicant: {
+      firstName: "Dana",
+      lastName: "Qassem",
+      workEmail: "finance@zaytoonahgroup.jo",
+      phoneNumber: "+962 78 512 9930",
+    },
+    companyDetails: {
+      legalCompanyName: "Zaytoonah Group for Real Estate Development",
+      tradingName: "Zaytoonah Group",
+      registrationNumber: "JO-CR-098231",
+      taxVatNumber: "JO-TAX-550982",
+      legalStructure: "Private Shareholding Company",
+      yearOfEstablishment: 2011,
+      registeredAddress: "Sweifieh, Amman, Jordan",
+      countryOfRegistration: "Jordan",
+      primaryContactName: "Dana Qassem",
+      positionTitle: "Finance Manager",
+      primaryPhoneNumber: "+962 78 512 9930",
+      businessLicenseNumber: "JO-LIC-40217",
+      contractorClassificationGrade: "Grade A (Ministry of Public Works)",
+      sectors: ["Real Estate", "Infrastructure"],
+      yearsOfExperience: 15,
+      teamSize: 140,
+      annualRevenueJod: 2350000,
+      primaryBankName: "Bank of Jordan",
+      ibanNumber: "JO55 BJOR 9988 7766",
+      swiftBicCode: "BJORJOAX",
+      bankBranchNameCity: "Sweifieh Branch, Amman",
+    },
   },
   {
     id: "wl-3",
@@ -28,6 +90,35 @@ export const initialWhitelistRequests = [
     requestedDate: "July 17, 2026",
     note: "",
     status: "Pending",
+    applicant: {
+      firstName: "Mazen",
+      lastName: "Tal",
+      workEmail: "ops@riversideholdings.jo",
+      phoneNumber: "+962 79 340 1187",
+    },
+    companyDetails: {
+      legalCompanyName: "Riverside Holdings",
+      tradingName: "Riverside Holdings",
+      registrationNumber: "JO-CR-076654",
+      taxVatNumber: "JO-TAX-330871",
+      legalStructure: "Limited Liability Company (LLC)",
+      yearOfEstablishment: 2008,
+      registeredAddress: "Abdoun, Amman, Jordan",
+      countryOfRegistration: "Jordan",
+      primaryContactName: "Mazen Tal",
+      positionTitle: "Operations Director",
+      primaryPhoneNumber: "+962 79 340 1187",
+      businessLicenseNumber: "JO-LIC-33012",
+      contractorClassificationGrade: "Grade A (Ministry of Public Works)",
+      sectors: ["Infrastructure", "Industrial"],
+      yearsOfExperience: 18,
+      teamSize: 210,
+      annualRevenueJod: 4100000,
+      primaryBankName: "Arab Bank",
+      ibanNumber: "JO77 ARAB 2233 4455",
+      swiftBicCode: "ARABJOAX",
+      bankBranchNameCity: "Abdoun Branch, Amman",
+    },
   },
 ];
 

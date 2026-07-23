@@ -1,17 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { theme } from "./styles/theme";
 import { AuthProvider } from "./store/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 import { useWhitelistRequests } from "./hooks/useWhitelistRequests";
 import { useUsers } from "./hooks/useUsers";
 import { useDisputes } from "./hooks/useDisputes";
-import { useAuditLog } from "./hooks/useAuditLog";
 
 import LoginScreen from "./screens/login/LoginScreen";
 import WhitelistScreen from "./screens/whitelist/WhitelistScreen";
 import UsersScreen from "./screens/users/UsersScreen";
 import DisputesScreen from "./screens/disputes/DisputesScreen";
-import AuditLogScreen from "./screens/auditLog/AuditLogScreen";
 
 import Sidebar from "./components/organisms/Sidebar";
 import Topbar from "./components/organisms/Topbar";
@@ -26,23 +24,15 @@ function AdminDashboard() {
   const [openDisputeId, setOpenDisputeId] = useState(null);
   const [toast, setToast] = useState(null);
 
-  const { log, append } = useAuditLog();
-
-  const { requests, approve: approveWhitelist, reject: rejectWhitelist } = useWhitelistRequests({
-    onDecision: ({ type, request, reason }) => {
+  const {
+    requests,
+    approve: approveWhitelist,
+    reject: rejectWhitelist,
+  } = useWhitelistRequests({
+    onDecision: ({ type, request }) => {
       if (type === "approved") {
-        append({
-          action: "Approved whitelist request",
-          detail: request.email,
-          admin: user?.name ? `Admin — ${user.name}` : "Admin",
-        });
         showToast(`${request.email} approved for registration`);
       } else {
-        append({
-          action: "Rejected whitelist request",
-          detail: `${request.email} — ${reason}`,
-          admin: user?.name ? `Admin — ${user.name}` : "Admin",
-        });
         showToast(`${request.email} rejected`);
       }
     },
@@ -50,19 +40,38 @@ function AdminDashboard() {
 
   const { users } = useUsers();
 
-  const { disputes, resolve: resolveDispute } = useDisputes({
-    onResolve: ({ dispute, message }) => {
-      append({
-        action: "Resolved dispute",
-        detail: `${dispute.id} — ${dispute.project}`,
-        admin: user?.name ? `Admin — ${user.name}` : "Admin",
-      });
-      showToast(`Dispute for ${dispute.project} marked resolved`);
+  const {
+    disputes,
+    details,
+    loadDetail,
+    resolve: resolveDispute,
+  } = useDisputes({
+    onResolve: ({ dispute }) => {
+      showToast(`Dispute for ${dispute.projectTitle} marked resolved`);
     },
   });
 
-  const openWhitelistRequest = requests.find((r) => r.id === openWhitelistId) || null;
-  const openDispute = disputes.find((d) => d.id === openDisputeId) || null;
+  const openWhitelistRequest =
+    requests.find((r) => r.id === openWhitelistId) || null;
+  const openDispute = openDisputeId
+    ? details[openDisputeId] ||
+      disputes.find((d) => d.projectId === openDisputeId) ||
+      null
+    : null;
+  const openDisputeDetailLoaded = openDisputeId
+    ? Boolean(details[openDisputeId])
+    : false;
+
+  // Fetch the full dispute (reason, submitted work, resolution) the moment
+  // a row is opened — the list only carries summaries.
+  useEffect(() => {
+    if (openDisputeId && !details[openDisputeId]) {
+      loadDetail(openDisputeId).catch(() =>
+        showToast("Couldn't load that dispute's details."),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openDisputeId]);
 
   function showToast(message) {
     setToast(message);
@@ -70,18 +79,30 @@ function AdminDashboard() {
   }
 
   async function handleApproveWhitelist(request) {
-    await approveWhitelist(request);
-    setOpenWhitelistId(null);
+    try {
+      await approveWhitelist(request);
+      setOpenWhitelistId(null);
+    } catch (err) {
+      showToast(err.message || "Couldn't approve this request.");
+    }
   }
 
   async function handleRejectWhitelist(request, reason) {
-    await rejectWhitelist(request, reason);
-    setOpenWhitelistId(null);
+    try {
+      await rejectWhitelist(request, reason);
+      setOpenWhitelistId(null);
+    } catch (err) {
+      showToast(err.message || "Couldn't reject this request.");
+    }
   }
 
   async function handleResolveDispute(dispute, message) {
-    await resolveDispute(dispute, message);
-    setOpenDisputeId(null);
+    try {
+      await resolveDispute(dispute, message);
+      setOpenDisputeId(null);
+    } catch (err) {
+      showToast(err.message || "Couldn't resolve this dispute.");
+    }
   }
 
   return (
@@ -106,17 +127,29 @@ function AdminDashboard() {
         disputesCount={disputes.filter((d) => d.status !== "Resolved").length}
       />
 
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0 }}>
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minWidth: 0,
+        }}
+      >
         <Topbar userName={user?.name} onLogout={signOut} />
 
         {screen === "whitelist" && (
-          <WhitelistScreen requests={requests} onOpenRequest={setOpenWhitelistId} />
+          <WhitelistScreen
+            requests={requests}
+            onOpenRequest={setOpenWhitelistId}
+          />
         )}
         {screen === "users" && <UsersScreen users={users} />}
         {screen === "disputes" && (
-          <DisputesScreen disputes={disputes} onOpenDispute={setOpenDisputeId} />
+          <DisputesScreen
+            disputes={disputes}
+            onOpenDispute={setOpenDisputeId}
+          />
         )}
-        {screen === "auditLog" && <AuditLogScreen log={log} />}
       </div>
 
       {openWhitelistRequest && (
@@ -131,6 +164,7 @@ function AdminDashboard() {
       {openDispute && (
         <DisputeDrawer
           dispute={openDispute}
+          detailLoaded={openDisputeDetailLoaded}
           onClose={() => setOpenDisputeId(null)}
           onResolve={handleResolveDispute}
         />

@@ -3,7 +3,7 @@ import { theme } from "../../styles/theme";
 import DisputeDetailBody from "../molecules/DisputeDetailBody";
 import Button from "../atoms/Button";
 
-export default function DisputeDrawer({ dispute, onClose, onResolve }) {
+export default function DisputeDrawer({ dispute, detailLoaded, onClose, onResolve }) {
   const [resolving, setResolving] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -48,7 +48,7 @@ export default function DisputeDrawer({ dispute, onClose, onResolve }) {
           }}
         >
           <div>
-            <p style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{dispute.project}</p>
+            <p style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>{dispute.projectTitle}</p>
             <p style={{ fontSize: 12, color: theme.muted, margin: "2px 0 0" }}>
               Raised {dispute.raisedDate}
             </p>
@@ -59,7 +59,7 @@ export default function DisputeDrawer({ dispute, onClose, onResolve }) {
         </div>
 
         <div style={{ flex: 1, overflowY: "auto" }}>
-          <DisputeDetailBody dispute={dispute} />
+          <DisputeDetailBody dispute={dispute} detailLoaded={detailLoaded} />
         </div>
 
         {!isResolved && (

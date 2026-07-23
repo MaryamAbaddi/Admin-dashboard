@@ -43,8 +43,8 @@ export default function LoginScreen() {
 
         <form onSubmit={handleSubmit}>
           <input
-            type="text"
-            placeholder="Username"
+            type="email"
+            placeholder="Email"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             style={inputStyle}
